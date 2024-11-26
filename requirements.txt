@@ -5,3 +5,5 @@ fastapi
 uvicorn
 pyspark
 psycopg2
+requests
+PyQt5
