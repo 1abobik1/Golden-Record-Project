@@ -1,6 +1,7 @@
-psycopg2
 pandas
 logging
 sqlalchemy
 fastapi
 uvicorn
+pyspark
+psycopg2
