@@ -34,17 +34,11 @@ def clean_data(input_path, output_dir):
     for col_name in string_columns:
         df_cleaned = df_cleaned.withColumn(col_name, lower(trim(col(col_name))))
 
-    # 4. Заполнение пропущенных значений
-    for col_name in string_columns:
-        df_cleaned = df_cleaned.fillna({col_name: "unknown"})
-    for col_name in numeric_columns:
-        df_cleaned = df_cleaned.fillna({col_name: 0})
-
-    # 5. Обработка датовых колонок
+    # 4. Обработка датовых колонок
     for col_name in date_columns:
         df_cleaned = df_cleaned.withColumn(col_name, to_date(col(col_name), "yyyy-MM-dd"))
 
-    # 6. Добавление новых колонок
+    # 5. Добавление новых колонок
     if date_columns:
         df_cleaned = df_cleaned.withColumn("create_year", year(col(date_columns[0])))
 
