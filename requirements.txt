@@ -6,3 +6,5 @@ uvicorn
 pyspark
 psycopg2
 jellyfish
+requests
+PyQt5
