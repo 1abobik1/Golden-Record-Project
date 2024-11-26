@@ -5,3 +5,4 @@ fastapi
 uvicorn
 pyspark
 psycopg2
+jellyfish
