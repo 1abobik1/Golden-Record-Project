@@ -1,3 +1,5 @@
 .venv
 .idea
 /data/raw/ds_dirty_fin_202410041147.csv
+/data/raw
+/data/processed

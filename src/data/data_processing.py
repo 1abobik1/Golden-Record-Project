@@ -2,6 +2,8 @@ import os
 import shutil
 from pyspark.sql.functions import col, trim, lower, to_date, year
 from pyspark.sql.types import StringType, DateType, IntegerType, FloatType
+
+import config.config
 from spark.spark_init import spark
 from config.config import RAW_DATA_PATH, PROCESSED_DATA_FOLDER
 
@@ -51,9 +53,3 @@ def clean_data(input_path, output_dir):
 
     print(f"Обработанный файл сохранен в: {final_csv_path}")
     return final_csv_path
-
-if __name__ == "__main__":
-    cleaned_file_path = clean_data(RAW_DATA_PATH, PROCESSED_DATA_FOLDER)
-
-    # Используйте путь очищенного файла для дальнейшей обработки
-    print(f"Путь очищенного файла: {cleaned_file_path}")

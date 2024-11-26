@@ -1,7 +1,9 @@
 import os
 from pyspark.sql.functions import col, substring, concat, lit
-from spark.spark_init import spark  # Импортируем SparkSession из общего модуля
-from src.data.data_processing import cleaned_file_path, output_dir
+from spark.spark_init import spark
+from config.config import RAW_DATA_PATH, PROCESSED_DATA_FOLDER
+from src.data.data_processing import clean_data
+
 
 def find_name_columns(df):
     """
@@ -38,7 +40,7 @@ def split_into_blocks(cleaned_file_path, output_dir):
     Разбиение очищенных данных на блоки.
     """
     # Загрузка очищенных данных
-    df = spark.read.csv(cleaned_file_path, header=True, inferSchema=True)
+    df = spark.read.csv(clean_data(RAW_DATA_PATH, PROCESSED_DATA_FOLDER), header=True, inferSchema=True)
 
     try:
         # Генерация ключей блокировки
@@ -57,5 +59,5 @@ def split_into_blocks(cleaned_file_path, output_dir):
 if __name__ == "__main__":
 
     # Разбиение на блоки
-    blocked_file_path = split_into_blocks(cleaned_file_path, output_dir)
+    blocked_file_path = split_into_blocks(RAW_DATA_PATH, PROCESSED_DATA_FOLDER)
     print(f"Файл с блоками готов: {blocked_file_path}")
