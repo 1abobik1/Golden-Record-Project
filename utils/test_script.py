@@ -1,23 +1,23 @@
-# from jellyfish import jaro_winkler_similarity, levenshtein_distance
-#
-# def combined_similarity(string1, string2, weight_jaro=0.7, weight_levenshtein=0.3):
-#     # Jaro-Winkler Similarity (значение от 0 до 1)
-#     jaro_score = jaro_winkler_similarity(string1, string2)
-#
-#     # Levenshtein Distance (нормализуем расстояние к значению от 0 до 1)
-#     max_len = max(len(string1), len(string2))  # Максимальная длина строк
-#     levenshtein_score = 1 - (levenshtein_distance(string1, string2) / max_len)
-#
-#     # Объединяем метрики
-#     combined_score = (weight_jaro * jaro_score) + (weight_levenshtein * levenshtein_score)
-#     return combined_score
+from jellyfish import jaro_winkler_similarity, levenshtein_distance
+
+def combined_similarity(string1, string2, weight_jaro=0.7, weight_levenshtein=0.3):
+    # Jaro-Winkler Similarity (значение от 0 до 1)
+    jaro_score = jaro_winkler_similarity(string1, string2)
+
+    # Levenshtein Distance (нормализуем расстояние к значению от 0 до 1)
+    max_len = max(len(string1), len(string2))  # Максимальная длина строк
+    levenshtein_score = 1 - (levenshtein_distance(string1, string2) / max_len)
+
+    # Объединяем метрики
+    combined_score = (weight_jaro * jaro_score) + (weight_levenshtein * levenshtein_score)
+    return combined_score
 
 
-# # Пример использования
-# string1 = "АбдусаламДворянниковdvorynnikov"
-# string2 = "АбдукаюмКамалитдинов"
-# print(jaro_winkler_similarity(string1, string2))
-#
+# Пример использования
+string1 = "абукпук"
+string2 = ""
+print(jaro_winkler_similarity(string1, string2))
+
 # combined_score = combined_similarity(string1, string2)
 #
 # print(f"Объединенная метрика сходства: {combined_score:.2f}")
