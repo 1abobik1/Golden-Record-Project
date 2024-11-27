@@ -1,21 +1,29 @@
 import os
-from pyspark.sql.functions import col, substring, concat, lit
-from spark.spark_init import spark
+from pyspark.sql.functions import col, concat, lit, when, date_format
 from config.config import RAW_DATA_PATH, PROCESSED_DATA_FOLDER
 from src.data.data_processing import clean_data
 
-def create_block_key(df):
-    # Автоматический поиск столбцов с подстрокой "name"
-    name_columns = [col_name for col_name in df.columns if "name" in col_name.lower()]
-    if len(name_columns) < 2:
-        raise ValueError("Недостаточно столбцов для генерации ключа. Нужно хотя бы два столбца с подстрокой 'name'.")
 
-    # Формирование ключей блоков
-    first_name_key = substring(col(name_columns[0]), 1, 4)
-    last_name_key = substring(col(name_columns[1]), 1, 4)
-    return df.withColumn("block_key", concat(first_name_key, lit("-"), last_name_key))
+def create_block_key(df):
+    """
+    Создание ключей блоков на основе create_date и source_cd.
+    """
+    # Извлекаем дату до дня включительно
+    create_date_key = date_format(col("create_date"), "yyyyMMdd")
+
+    # Проверяем наличие source_cd и формируем ключ
+    block_key = when(
+        col("source_cd").isNotNull(),
+        concat(create_date_key, lit("-"), col("source_cd"))  # create_date + source_cd
+    ).otherwise(create_date_key)  # Только create_date, если source_cd отсутствует
+
+    return df.withColumn("block_key", block_key)
+
 
 def split_into_blocks(input_path, output_dir):
+    """
+    Разбиение очищенных данных на блоки.
+    """
     # Очистка данных и создание ключей блокировки
     df_cleaned = clean_data(input_path)
     df_with_blocks = create_block_key(df_cleaned)
@@ -25,6 +33,7 @@ def split_into_blocks(input_path, output_dir):
     df_with_blocks.write.csv(blocked_file_name, header=True, mode="overwrite")
     print(f"Файл с блоками сохранен в: {blocked_file_name}")
     return blocked_file_name
+
 
 if __name__ == "__main__":
     # Разбиение на блоки
