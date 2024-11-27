@@ -1,21 +1,23 @@
 import os
-from pyspark.sql.functions import col, trim, lower
+from pyspark.sql.functions import col, trim, lower, when
 from pyspark.sql.types import StringType
 from spark.spark_init import spark
 
-
-def clean_data(input_path, output_dir):
-    dirty_file_name = os.path.basename(input_path)
-    cleaned_file_name = f"cleared_data_file_name_{dirty_file_name}"
-    final_csv_path = os.path.join(output_dir, cleaned_file_name)
-
+def clean_data(input_path):
     # Загрузка и обработка данных
     df = spark.read.csv(input_path, header=True, inferSchema=True).dropna(how='all')
 
+    # Определяем текстовые столбцы
     string_columns = [field.name for field in df.schema.fields if isinstance(field.dataType, StringType)]
-    for col_name in string_columns:
-        df = df.withColumn(col_name, lower(trim(col(col_name))))
 
-    df.write.csv(final_csv_path, header=True, mode="overwrite")
-    print(f"Обработанный файл сохранен в: {final_csv_path}")
-    return final_csv_path
+    # Обработка текстовых столбцов
+    for col_name in string_columns:
+        # Приведение к нижнему регистру, удаление пробелов, удаление `Ъ` или `Ь` в начале строки
+        df = df.withColumn(
+            col_name,
+            when(col(col_name).rlike(r"^[ЪЬъь]"), col(col_name).substr(2, 1000000))  # Удаляем первый символ, если он Ъ/Ь
+            .otherwise(col(col_name))  # Иначе оставляем строку без изменений
+        )
+        df = df.withColumn(col_name, lower(trim(col(col_name))))  # Приведение к нижнему регистру и удаление пробелов
+
+    return df

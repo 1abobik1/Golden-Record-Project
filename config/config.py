@@ -8,4 +8,6 @@ os.makedirs(RAW_DATA_FOLDER, exist_ok=True)
 os.makedirs(PROCESSED_DATA_FOLDER, exist_ok=True)
 
 # Переменная для пути к последнему загруженному файлу
-RAW_DATA_PATH = r'..\\\\..\\\\data\\\\raw\\raw_test_file.csv'
+RAW_DATA_PATH = r'..\\\\..\\\\data\\\\raw\\ds_dirty_fin_202410041147.csv'
+
+
