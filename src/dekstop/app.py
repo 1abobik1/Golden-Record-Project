@@ -9,6 +9,9 @@ from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QLineEdit,
                              QPushButton, QVBoxLayout, QStackedWidget,
                              QMessageBox, QFileDialog, QListWidget)
 from config.config import RAW_DATA_FOLDER, RAW_DATA_PATH
+import sys
+
+python_executable = sys.executable
 
 class FileDownloaderApp(QWidget):
     def __init__(self):
@@ -168,14 +171,14 @@ class FileDownloaderApp(QWidget):
     def start_conversion(self):
         if self.last_downloaded_file_path:
             try:
+                import sys
                 script_path = os.path.abspath(
                     os.path.join(os.path.dirname(__file__), "..", "blocking", "create_block_key.py"))
-                # Запуск скрипта с захватом stdout и stderr
-                python_executable = r"C:\Users\maksi\PycharmProjects\Golden-Record-Project\.venv\Scripts\python.exe"
+                # Используем текущий Python
+                python_executable = sys.executable
                 result = subprocess.run([python_executable, script_path], check=True,
-                capture_output=True,
-                text=True
-                )
+                                        capture_output=True,
+                                        text=True)
 
                 QMessageBox.information(self, "Информация",
                                         f"Скрипт '{script_path}' успешно выполнен.\n\nВывод:\n{result.stdout}")
